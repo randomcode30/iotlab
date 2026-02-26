@@ -1,0 +1,77 @@
+#include <SPI.h>
+#include <MFRC522.h>
+
+#define SS_PIN 10
+#define RST_PIN 9
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  rfid.PCD_Init();
+
+  Serial.println("Place your RFID tag near the reader...");
+}
+
+void loop() {
+  if (!rfid.PICC_IsNewCardPresent())
+    return;
+
+  if (!rfid.PICC_ReadCardSerial())
+    return;
+
+  Serial.print("UID: ");
+
+  for (byte i = 0; i < rfid.uid.size; i++) {
+    Serial.print(rfid.uid.uidByte[i], HEX);
+    Serial.print(" ");
+  }
+
+  Serial.println();
+  rfid.PICC_HaltA();
+}
+
+
+''' next code '''
+#include <SPI.h>
+#include <MFRC522.h>
+
+#define SS_PIN 10
+#define RST_PIN 9
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+
+byte authorizedUID[4] = {0x11, 0x1C, 0x34, 0x06};
+
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  rfid.PCD_Init();
+
+  Serial.println("Scan your card");
+}
+
+void loop() {
+  if (!rfid.PICC_IsNewCardPresent())
+    return;
+
+  if (!rfid.PICC_ReadCardSerial())
+    return;
+
+  bool match = true;
+
+  for (byte i = 0; i < rfid.uid.size; i++) {
+    if (rfid.uid.uidByte[i] != authorizedUID[i]) {
+      match = false;
+    }
+  }
+
+  if (match) {
+    Serial.println("ACCESS GRANTED");
+  } else {
+    Serial.println("ACCESS DENIED");
+  }
+
+  rfid.PICC_HaltA();
+}

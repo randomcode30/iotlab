@@ -1,0 +1,27 @@
+char data = 0;  
+
+void setup()
+{ 
+  Serial.begin(9600); // Communication with HC-05
+  pinMode(13, OUTPUT); // Built-in LED
+}
+
+void loop()
+{ 
+  if (Serial.available() > 0)
+  {
+    data = Serial.read(); // Read received data
+
+    Serial.print("Received: ");
+    Serial.println(data);
+
+    if (data == '1')
+    {
+      digitalWrite(13, HIGH); // LED ON
+    }
+    else if (data == '0')
+    {
+      digitalWrite(13, LOW); // LED OFF
+    }
+  }
+}

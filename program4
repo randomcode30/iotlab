@@ -1,0 +1,66 @@
+#include <WiFi.h>        // WiFi library
+#include "DHT.h"         // DHT sensor library
+#include "ThingSpeak.h"  // ThingSpeak library
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+
+DHT dht(DHTPIN , DHTTYPE);
+
+const char* ssid = "vivo V29e";
+const char* password = "";
+
+unsigned long mychannelnumber =  ;
+const char* MyWriteAPIKey = "";
+
+WiFiClient client;
+
+void setup(){
+  Serial.begin(115200);
+
+  WiFi.begin(ssid,password);
+  Serial.print("Connecting to WiFi ");
+
+  while (WiFi.status() != WL_CONNECTED)
+  { 
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\n Connected to WiFi!");
+
+  ThingSpeak.begin(client);
+  dht.begin();
+}
+
+void loop()
+{
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+
+  if(isnan(h) || isnan(t))
+  {
+    Serial.println("Failed to read from DHT Sensor!");
+    return;
+  }
+
+  Serial.print("Temperature:");
+  Serial.print(t);
+  Serial.print(" C Humidity:");
+  Serial.print(h);
+
+  ThingSpeak.setField(1,t);
+  ThingSpeak.setField(2,h);
+
+  int x = ThingSpeak.writeFields(mychannelnumber, MyWriteAPIKey);
+
+  if (x == 200)
+  { 
+    Serial.println("Channel Update Successful !");
+  }
+  else{
+    Serial.println("Problem updating channel. HTTP error code: " + String(x));
+  }
+
+  delay(20000);
+}

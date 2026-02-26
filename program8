@@ -1,0 +1,53 @@
+#include <WiFi.h>
+#include "DHT.h"
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+
+DHT dht(DHTPIN, DHTTYPE);
+
+const char* ssid = "YOUR_SSID";
+const char* password = "YOUR_PASSWORD";
+
+WiFiServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+
+  server.begin();
+}
+
+void loop() {
+  WiFiClient client = server.available();
+
+  if (client) {
+    client.readStringUntil('\r');
+    client.flush();
+
+    float humidity = dht.readHumidity();
+    float temperature = dht.readTemperature();
+
+    String html = "<!DOCTYPE html><html><head>"
+                  "<meta http-equiv='refresh' content='2'/>"
+                  "<title>ESP32 Weather Monitor</title>"
+                  "</head><body>";
+
+    html += "<h2>Temperature: " + String(temperature) + " °C</h2>";
+    html += "<h2>Humidity: " + String(humidity) + " %</h2>";
+    html += "</body></html>";
+
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-type:text/html");
+    client.println();
+    client.println(html);
+
+    client.stop();
+  }
+}

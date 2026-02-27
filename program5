@@ -25,3 +25,30 @@ void loop()
     }
   }
 }
+
+
+//Components Required:
+
+Component Quantity
+Arduino UNO 1
+HC-05 Bluetooth module 1
+LED 1
+
+220Ω resistor 1
+Jumper wires few
+Breadboard 1
+Android phone with MIT App Inventor App 1
+
+Circuit Connections:
+HC-05 Pin Arduino Pin Notes
+VCC 5V Power
+GND GND Ground
+TXD RX Use for receiving
+RXD TX Use 1kΩ + 2kΩ resistors to
+
+drop voltage
+
+EN Not Connected (Used only for AT Mode)
+LED Pin Arduino Pin
++ve (Anode) D13
+–ve (Cathode) GND (through 220Ω resistor)//

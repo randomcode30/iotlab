@@ -64,3 +64,20 @@ void loop()
 
   delay(20000);
 }
+
+//Hardware Connections
+DHT Sensor Pin ESP32 Pin
+VCC 3.3V
+GND GND
+DATA D4
+Setup ThingSpeak
+ Create an account at https://thingspeak.com
+ Create a New Channel
+ Add two fields:
+ Field 1 → Temperature
+ Field 2 → Humidity
+ Go to API Keys tab → copy your Write API Key
+Make sure you install:
+ DHT sensor library (by Adafruit)
+ ThingSpeak library (by MathWorks)
+ WiFi library (already built-in for ESP32) //
